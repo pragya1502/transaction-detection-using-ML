@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPI Scam Detection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 50px;
+      background-color: white;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .navbar a {
+      text-decoration: none;
+      margin: 0 15px;
+      color: black;
+      font-weight: bold;
+    }
+    .container {
+      margin-top: 50px;
+      padding: 20px;
+    }
+    .title {
+      font-size: 36px;
+      font-weight: bold;
+    }
+    .subtitle {
+      color: gray;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      margin: auto;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div><b>SCAMGUARD</b></div>
+    <div>
+      <a href="#">Home</a>
+      <a href="#">How it Works</a>
+      <a href="#">Pricing</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 class="title">Protect your transactions with AI</h1>
+    <p class="subtitle">Detect and prevent fraud in real-time</p>
+
+    <div class="form-container">
+      <h3>Enter Transaction Details</h3>
+      <form id="transactionForm">
+        <label>Transaction Type:</label>
+        <select id="type" required>
+          <option value="PAYMENT">Payment</option>
+          <option value="DEBIT">Debit</option>
+          <option value="CASH_OUT">Cash Out</option>
+          <option value="TRANSFER">Transfer</option>
+          <option value="CASH_IN">Cash In</option>
+        </select>
+
+        <label>Amount:</label>
+        <input type="number" id="amount" required>
+
+        <label>User ID (Sender - nameOrig):</label>
+        <input type="text" id="nameOrig" required>
+
+        <label>Receiver ID (nameDest):</label>
+        <input type="text" id="nameDest" required>
+
+        <label>Sender's New Balance (newbalanceOrig):</label>
+        <input type="number" id="newbalanceOrig" required>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("transactionForm").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent page reload
+
+      const transactionData = {
+        type: document.getElementById("type").value,
+        amount: parseFloat(document.getElementById("amount").value),
+        nameOrig: document.getElementById("nameOrig").value,
+        nameDest: document.getElementById("nameDest").value,
+        newbalanceOrig: parseFloat(document.getElementById("newbalanceOrig").value)
+      };
+
+      console.log("📤 Sending Transaction Data:", transactionData); // Debug
+
+      fetch("http://127.0.0.1:5000/submit_transaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(transactionData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("📥 Response:", data);
+        document.getElementById("result").innerHTML =
+          `<h3>Transaction Status: ${data.status || data.error}</h3>`;
+      })
+      .catch(error => {
+        console.error("❌ Fetch Error:", error);
+        document.getElementById("result").innerHTML =
+          `<h3>Error: ${error.message}</h3>`;
+      });
+    });
+  </script>
+
+</body>
+</html>
